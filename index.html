@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>To-Do List with Persistent Notifications</title>
+    <title>To-Do List with Notifications</title>
 </head>
 <body>
     <h2>To-Do List</h2>
@@ -12,13 +12,25 @@
     <ul id="taskList"></ul>
 
     <script>
-        if (Notification.permission !== 'granted') {
-            Notification.requestPermission();
-        }
+        // Request notification permission on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (Notification.permission !== 'granted') {
+                alert('Please allow notifications to add tasks.');
+                Notification.requestPermission();
+            }
+        });
 
         function addTask() {
             const taskInput = document.getElementById('taskInput');
             const task = taskInput.value.trim();
+
+            // Check if notification permission is granted
+            if (Notification.permission !== 'granted') {
+                alert('Please allow notifications to add tasks.');
+                Notification.requestPermission(); // Prompt again if denied
+                return;
+            }
+
             if (!task) return;
 
             // Create task item
@@ -32,7 +44,7 @@
             // Create persistent notification
             const notification = new Notification('Task Reminder', {
                 body: task,
-                requireInteraction: true // Keeps the notification open
+                requireInteraction: true
             });
 
             // Close notification when the task is marked as done
