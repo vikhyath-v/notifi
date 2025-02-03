@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do List with Persistent Notifications</title>
+</head>
+<body>
+    <h2>To-Do List</h2>
+    <input type="text" id="taskInput" placeholder="Enter a task">
+    <button onclick="addTask()">Add Task</button>
+
+    <ul id="taskList"></ul>
+
+    <script>
+        if (Notification.permission !== 'granted') {
+            Notification.requestPermission();
+        }
+
+        function addTask() {
+            const taskInput = document.getElementById('taskInput');
+            const task = taskInput.value.trim();
+            if (!task) return;
+
+            // Create task item
+            const li = document.createElement('li');
+            li.textContent = task;
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.style.marginLeft = '10px';
+
+            // Create persistent notification
+            const notification = new Notification('Task Reminder', {
+                body: task,
+                requireInteraction: true // Keeps the notification open
+            });
+
+            // Close notification when the task is marked as done
+            checkbox.addEventListener('change', function () {
+                if (this.checked) {
+                    li.style.textDecoration = 'line-through';
+                    notification.close();
+                }
+            });
+
+            li.appendChild(checkbox);
+            document.getElementById('taskList').appendChild(li);
+
+            taskInput.value = '';
+        }
+    </script>
+</body>
+</html>
